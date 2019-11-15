@@ -1,0 +1,4 @@
+transfer_service/node_modules/
+postgres/db_data/
+lib/
+package-lock.json

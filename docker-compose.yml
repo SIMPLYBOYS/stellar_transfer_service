@@ -1,0 +1,26 @@
+version: '3'
+services:
+  transfer_server:
+    container_name: api-transfer_server
+    build: ./transfer_service
+    ports:
+      - 3000:3000
+    environment:
+      PORT: 3000
+    volumes:
+      - ./transfer_service:/usr/src/app
+    depends_on:
+      - postgres
+    links:
+      - postgres
+  postgres:
+    container_name: postgres-transfer_server
+    build: ./postgres
+    restart: always
+    volumes:
+      - ./postgres/db_data:/var/lib/postgresql/data
+    ports:
+      - 5434:5432
+    environment:
+      POSTGRES_PASSWORD: mysecretpassword
+      DB_NAME: book_store

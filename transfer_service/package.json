@@ -1,0 +1,26 @@
+{
+  "name": "anchor_transfer_server",
+  "version": "0.0.1",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development nodemon ./app.js",
+    "start": "cross-env NODE_ENV=production node ./app.js",
+    "test": "cross-env NODE_ENV=test node_modules/.bin/mocha"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "http": "0.0.0",
+    "moment-duration-format": "^2.3.2",
+    "moment-timezone": "^0.5.27",
+    "nodemon": "^1.19.4",
+    "pg": "^7.10.0",
+    "stellar-base": "^2.1.2",
+    "stellar-sdk": "^3.2.0"
+  },
+  "devDependencies": {}
+}
