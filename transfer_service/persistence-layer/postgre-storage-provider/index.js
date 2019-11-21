@@ -56,6 +56,7 @@ class PostgreStorageProvider extends StorageProvider {
     }
 
     async fetchSubscriptions() {
+        console.log('1122-1');
         console.log('provider.fetchSubscriptions ==>');
         const client = await pool.connect();
         try {

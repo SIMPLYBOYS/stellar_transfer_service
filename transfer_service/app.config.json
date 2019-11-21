@@ -2,7 +2,7 @@
     "authorization": "disabled",
     "storageProvider": "postgre",
     "storageConnectionString": "",
-    "apiPort": 3000,
+    "apiPort": 4021,
     "horizon": "https://horizon-testnet.stellar.org/",
     "signatureSecret": "SBGML2SLQ7K27OJWZSWWIAE2IMT7PWHPWQV2JYPJH2AEEMG7UAXQ2X2L",
     "maxActiveSubscriptions": 10000,
@@ -11,7 +11,7 @@
     "adminAuthenticationToken": "",
     "database": "transfer_service",
     "host": "postgres",
-    "port": "5435",
+    "port": "5434",
     "user": "postgres",
     "password": "mysecretpassword"
   }

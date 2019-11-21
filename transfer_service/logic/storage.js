@@ -1,13 +1,14 @@
 const {StrKey} = require('stellar-base'),
     BigNumber = require('bignumber.js'),
+    {parseAsset} = require('../util/asset-helper'),
     errors = require('../util/errors'),
-    generateToken = require('../util/auth-token-generator');
+    generateToken = require('../util/auth-token-generator')
 
 let lastIngested,
     storageProviders = {
-        postgre: '../persistence-layer/postgre-storage-provider',
-        memory: '../persistence-layer/memory-storage-provider'
-    };
+        memory: '../persistence-layer/memory-storage-provider',
+        postgre: '../persistence-layer/postgre-storage-provider'
+    }
 
 function isLastIngestedCursorNewer(newIngestedTxSequence) {
     return new BigNumber(newIngestedTxSequence || '0').comparedTo(new BigNumber(lastIngested || '0')) === -1
@@ -18,11 +19,15 @@ class Storage {
      * Initialize the storage
      */
     init(config) {
+        console.log('config:');
+        console.log(config);
         //get storage provider name from config
         let provider = storageProviders[config.storageProvider];
+        console.log('====\n');
+        console.log(provider);
         //use in-memory storage provider by default
         if (!provider) {
-            provider = 'memory';
+            provider = 'memory'
         }
         //it can be a string containing a path to module
         if (typeof provider === 'string') {
@@ -30,15 +35,13 @@ class Storage {
         }
         //initialize storage provider
         this.provider = new provider(config);
-        if (!(this.provider instanceof require('../persistence-layer/storage-provider'))) throw new TypeError('Invalid storage provider');
-        console.log(`Using "${config.storageProvider}" storage provider.`);
+        if (!(this.provider instanceof require('../persistence-layer/storage-provider'))) throw new TypeError('Invalid storage provider')
+        console.log(`Using "${config.storageProvider}" storage provider!`)
 
         //create default user
         return this.provider.createDefaultAdminUser(config.adminAuthenticationToken || generateToken())
-            .then((admin) => { 
-                console.log('Administrator authentication token: ' + admin.authToken);
-            })
-            .catch(e => errors.handleSystemError(e));
+            .then(admin => console.log('Administrator authentication token: ' + admin.authToken))
+            .catch(e => errors.handleSystemError(e))
     }
 
     /**
@@ -46,7 +49,7 @@ class Storage {
      * @returns {Promise<Subscription[]>}
      */
     fetchSubscriptions() {
-        return this.provider.fetchSubscriptions();
+        return this.provider.fetchSubscriptions()
     }
 
     /**
@@ -59,7 +62,7 @@ class Storage {
             .then(subscription => {
                 if (!subscription) return Promise.reject(errors.notFound())
                 return subscription
-            });
+            })
     }
 
     /**
@@ -68,7 +71,7 @@ class Storage {
      * @returns {Promise<Notification>}
      */
     fetchNextNotification(subscriptionId) {
-        return this.provider.fetchNextNotification(subscriptionId);
+        return this.provider.fetchNextNotification(subscriptionId)
     }
 
     /**
@@ -77,7 +80,7 @@ class Storage {
      * @returns {Promise<int>}
      */
     createNotifications(notifications) {
-        return this.provider.createNotifications(notifications);
+        return this.provider.createNotifications(notifications)
     }
 
     /**
@@ -94,7 +97,7 @@ class Storage {
             .catch(e => {
                 errors.handleSystemError(e)
                 return null
-            });
+            })
     }
 
     /**
@@ -109,11 +112,11 @@ class Storage {
             .then(()=>{
                 //notification was successfully sent to all recipients
                 if (!notification.subscriptions.length) return this.provider.removeNotification(notification)
-            });
+            })
     }
 
     saveSubscription(subscription) {
-        return this.provider.saveSubscription(subscription);
+        return this.provider.saveSubscription(subscription)
     }
 
     /**
@@ -130,7 +133,7 @@ class Storage {
                     lastIngested = ingestedTxSequence
                 }
                 return lastIngested
-            });
+            })
     }
 
     /**
@@ -144,8 +147,16 @@ class Storage {
         if (!subscriptionParams)
             return Promise.reject(errors.badRequest('Subscription params were not provided.'))
 
+        // if (!subscriptionParams.reaction_url) {
+        //     return Promise.reject(errors.validationError('reaction_url', 'Reaction URL is required.'))
+        // }
+        // if (!/^(?:http(s)?:\/\/)[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/.test(subscriptionParams.reaction_url)) {
+        //     return Promise.reject(errors.validationError('reaction_url', 'Reaction URL is required.'))
+        // }
+
         let subscription = {
-                user: user.id
+                user: user.id,
+                // reaction_url: subscriptionParams.reaction_url
             },
             isValid = false
 
@@ -153,18 +164,18 @@ class Storage {
 
         if (subscriptionParams.account) {
             if (!StrKey.isValidEd25519PublicKey(subscriptionParams.account))
-                return Promise.reject(errors.validationError('account', 'Invalid Stellar account address.'));
+                return Promise.reject(errors.validationError('account', 'Invalid Stellar account address.'))
 
-            subscription.account = subscriptionParams.account;
-            isValid = true;
+            subscription.account = subscriptionParams.account
+            isValid = true
         }
 
         if (subscriptionParams.memo) {
             if (typeof subscriptionParams.memo === 'string' && subscriptionParams.memo.length > 64)
-                return Promise.reject(errors.validationError('memo', 'Invalid memo format. String is too long.'));
+                return Promise.reject(errors.validationError('memo', 'Invalid memo format. String is too long.'))
 
-            subscription.memo = '' + subscriptionParams.memo;
-            isValid = true;
+            subscription.memo = '' + subscriptionParams.memo
+            isValid = true
         }
 
         if (subscriptionParams.operation_types) {
@@ -208,6 +219,10 @@ class Storage {
         }
 
         return this.provider.saveSubscription(subscription)
+    }
+
+    static registerStorageProvider(providerName, provider) {
+        storageProviders[providerName] = provider
     }
 }
 

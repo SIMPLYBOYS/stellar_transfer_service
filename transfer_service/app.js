@@ -1,10 +1,11 @@
 process.env.NODE_ENV = process.env.NODE_ENV || 'production'
 
-const config = require('./models/config')
+const config = require('./models/config');
 //init storage and persistence layer
-const storage = require('./logic/storage')
+const storage = require('./logic/storage');
 storage.init(config)
     .then(() => {
+        console.log('init!');
         //init and start observer
         // const observer = require('./logic/observer')
         // observer.start()
