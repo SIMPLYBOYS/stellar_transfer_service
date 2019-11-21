@@ -18,5 +18,5 @@ RUN npm audit fix
 # Bundle app source
 COPY . .
 
-EXPOSE 3000
+EXPOSE 4021
 CMD [ "npm", "run", "dev" ]
