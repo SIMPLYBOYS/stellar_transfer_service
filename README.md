@@ -1,7 +1,7 @@
 ## Transfer service part of Stellar anchor service
 
 <img
-    src="https://drive.google.com/file/d/1bGsB3OX6GHCaGFT84Xsoj9fch1B8_rkh"
+    src="https://drive.google.com/file/d/1bGsB3OX6GHCaGFT84Xsoj9fch1B8_rkh/view"
     alt="Transfer_Service Architecture Diagram"
     title="Transfer_Service Architecture Diagram" />
 
